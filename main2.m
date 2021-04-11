@@ -33,7 +33,7 @@ count = zeros(1,length(E));
 T_mean = zeros(1,length(E));
 fval2 = zeros(L,1);
 exitflag2 = zeros(L,1);
-T_mean2 = zeros(1,length(E2));
+T_mean2 = zeros(1,length(E));
 for i = 1:length(E)
     for j = 1:L
         d_k = radius*rand(K,1);             % distance between user and BS
@@ -104,14 +104,14 @@ plot(E,T_mean2,'r');
 xlabel('Energy threshold for low-energy users')
 ylabel('Latency threshold for low-latency users')
 legend('variable bandwidth','equally shared bandwidth')
-% saveas(h1,'C:\Users\User\Desktop\Διπλωματική\Matlab\graphs\change_pmax\median\iter1000_5','jpeg');
+% saveas(h1,'C:\Users\User\Desktop\Γ„Γ©Γ°Γ«ΓΉΓ¬Γ΅Γ΄Γ©ΓªΓ\Matlab\graphs\change_pmax\median\iter1000_5','jpeg');
 % 
 % figure;
 % h2 = plot(p_max,T_mean);
 % xlabel('Maximim transmission power of users')
 % ylabel('Latency threshold for low-latency users')
 % title('p_max -> 0.05:0.1:10 | 500 iter');
-% saveas(h2,'C:\Users\User\Desktop\Διπλωματική\Matlab\graphs\change_pmax\mean\iter1000_5','jpeg');
+% saveas(h2,'C:\Users\User\Desktop\Γ„Γ©Γ°Γ«ΓΉΓ¬Γ΅Γ΄Γ©ΓªΓ\Matlab\graphs\change_pmax\mean\iter1000_5','jpeg');
 
 % figure;
 % plot()

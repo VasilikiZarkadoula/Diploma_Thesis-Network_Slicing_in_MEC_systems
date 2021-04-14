@@ -5,13 +5,13 @@ function f = NonLinearConstraints_noB(R,g,No,C,B,E,E2,T2,M,N)
         m_latency_offload = zeros(M,1);
         m_energy = zeros(M,1);
         m_energy_offload = zeros(M,1);
-        for i = 0:M-1
+        for i = 1:M
             % constraint 6
-            m_latency(i+1) = (R(i+1))/(B(i+1)*log(1+(x(2+M+i)*g(i+1))/(B(i+1)*No))) + (C(i+1)*R(i+1)/x(2+i)) - x(1);
-            m_latency_offload(i+1) = -((R(i+1)) / (B(i+1)*log(1+(x(2+M+i)*g(i+1))/(B(i+1)*No))) + (C(i+1)*R(i+1))/x(2+i));
+            m_latency(i) = (R(i))/(B(i)*log2(1+(x(1+M+i)*g(i))/(B(i)*No))) + (C(i)*R(i))/x(1+i) - x(1);
+            m_latency_offload(i) = -((R(i))/(B(i)*log2(1+(x(1+M+i)*g(i))/(B(i)*No))) + (C(i)*R(i))/x(1+i));
             % constraint 8
-            m_energy(i+1) = (R(i+1)*x(2+M+i))/(B(i+1)*log(1+(x(2+M+i)*g(i+1))/(B(i+1)*No))) - E;
-            m_energy_offload(i+1) = -(R(i+1)*x(2+M+i))/(B(i+1)*log(1+(x(2+M+i)*g(i+1))/(B(i+1)*No)));
+            m_energy(i) = (R(i)*x(1+M+i))/(B(i)*log2(1+(x(1+M+i)*g(i))/(B(i)*No))) - E;
+            m_energy_offload(i) = -((R(i)*x(1+M+i))/(B(i)*log2(1+(x(1+M+i)*g(i))/(B(i)*No))));
         end
         
         % low energy consumption users constraints
@@ -19,13 +19,13 @@ function f = NonLinearConstraints_noB(R,g,No,C,B,E,E2,T2,M,N)
         n_latency_offload = zeros(N,1);
         n_energy = zeros(N,1);
         n_energy_offload = zeros(N,1);
-        for j = 0:N-1
+        for j = 1:N
             % constraint 7
-            n_latency(j+1) = (R(M+j+1))/(B(M+j+1)*log(1+(x(2+2*M+N+j)*g(i+1))/(B(M+j+1)*No))) + (C(M+j+1)*R(M+j+1))/x(2+2*M+j) - T2;
-            n_latency_offload(j+1) = -((R(M+j+1))/(B(M+j+1)*log(1+(x(2+2*M+N+j)*g(i+1))/(B(M+j+1)*No))) + (C(M+j+1)*R(M+j+1))/x(2+2*M+j));
+            n_latency(j) = (R(M+j))/(B(M+j)*log2(1+(x(1+2*M+N+j)*g(M+j))/(B(M+j)*No))) + (C(M+j)*R(M+j))/x(1+2*M+j) - T2;
+            n_latency_offload(j) = -((R(M+j))/(B(M+j)*log2(1+(x(1+2*M+N+j)*g(M+j))/(B(M+j)*No))) + (C(M+j)*R(M+j))/x(1+2*M+j));
             % constraint 9
-            n_energy(j+1) = (R(M+j+1)*x(2+2*M+N+j))/(B(M+j+1)*log(1+(x(2+2*M+N+j)*g(i+1))/(B(M+j+1)*No))) - E2;
-            n_energy_offload(j+1) = -((R(M+j+1)*x(2+2*M+N+j))/(B(M+j+1)*log(1+(x(2+2*M+N+j)*g(i+1))/(B(M+j+1)*No))));
+            n_energy(j) = (R(M+j)*x(1+2*M+N+j))/(B(M+j)*log2(1+(x(1+2*M+N+j)*g(M+j))/(B(M+j)*No))) - E2;
+            n_energy_offload(j) = -((R(M+j)*x(1+2*M+N+j))/(B(M+j)*log2(1+(x(1+2*M+N+j)*g(M+j))/(B(M+j)*No))));
         end
         
         c = [m_latency; m_latency_offload; m_energy; m_energy_offload;...

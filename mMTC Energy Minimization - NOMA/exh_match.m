@@ -1,0 +1,36 @@
+function exhaustive_matching = exh_match(matrix)
+
+% Create a list of possibile indicies in the n x m matrix
+index_range = 1:length(matrix);
+
+% Create a permutation of array indicies
+permutation = perms(index_range);
+
+lowest = -1;
+temp = zeros(1,length(matrix));          % Temporary tuple storage
+
+% Loop through all permutations possible
+for i = 1:length(permutation)
+    
+    index_assignment = permutation(i,:);
+    cost = 0;
+    
+    % Loop through all index assignments
+    first_perm = permutation(1,:);
+    for j = 1:length(first_perm)
+        user = first_perm(j);
+        cost = cost + matrix(user,index_assignment(user));
+        
+    end
+    if cost < lowest || lowest == -1
+        lowest = cost;
+        temp = index_assignment;
+    end
+end
+us = index_range;
+arr = [us' temp'];
+arr = flip(arr');
+out = sortrows(arr.',1).';
+exhaustive_matching = out(2,:);
+
+

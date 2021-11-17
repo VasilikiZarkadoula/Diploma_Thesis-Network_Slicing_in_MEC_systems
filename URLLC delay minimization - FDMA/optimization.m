@@ -1,4 +1,4 @@
-function [x,fval,exitflag] = optimization(K,M,N,B,F,scaleB,scaleF,p_max,R_k,g_k,N_0,C_k,E,E2,T2,options)
+function [x,fval,exitflag] = optimization(K,U,M,B,F,scaleB,scaleF,p_max,L,g,No,C_k,Eu,Em,Tm,options)
 
 % Objective Function %
 fun =@(x) obj(x);
@@ -9,23 +9,22 @@ x0 = ones(numOfParameters,1);
 
 % Variable Bounds %
 lb = zeros(numOfParameters,1);
-ub = [Inf; B*ones(M,1); F*ones(M,1); p_max*ones(M,1);...
-    B*ones(N,1); F*ones(N,1); p_max*ones(N,1)];
+ub = [Inf; B*ones(U,1); F*ones(U,1); p_max*ones(U,1);...
+           B*ones(M,1); F*ones(M,1); p_max*ones(M,1)];
 
 % Linear Inequality Constraints %
-[A,b] = LinearConstraints(M,N,B,F,scaleB,scaleF);
+[A,b] = LinearConstraints(U,M,B,F,scaleB,scaleF);
 
 % Inequality Constraints %
 Aeq = [];
 beq = [];
 
 % Scaling factor
-scaling_factor = [1; scaleB*ones(M,1); scaleF*ones(M,1); ones(M,1);...
-    scaleB*ones(N,1); scaleF*ones(N,1); ones(N,1)];
+scaling_factor = [1; scaleB*ones(U,1); scaleF*ones(U,1); ones(U,1);...
+                     scaleB*ones(M,1); scaleF*ones(M,1); ones(M,1)];
 
 % Non-linear Inequality Constraints
-nonlcon = NonLinearConstraints(R_k,g_k,N_0,C_k,E,E2,T2,M,N,K,...
-    scaleB,scaleF);
+nonlcon = NonLinearConstraints(L,g,No,C_k,Eu,Em,Tm,U,M,K,scaleB,scaleF);
 
 [x_scaled,fval,exitflag] = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);
 x = x_scaled.*scaling_factor;

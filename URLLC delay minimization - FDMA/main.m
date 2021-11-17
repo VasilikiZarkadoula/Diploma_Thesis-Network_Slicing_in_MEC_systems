@@ -1,119 +1,94 @@
+% Diploma Thesis - URLLC Delay Minimization with FDMA
+% Simulation Results
+% Vasiliki Zarkadoula
 close all;
 clear;
 clc;
 
-K = 10;                 % total users
-M = K/2;                    % low latency users
-N = K - M;                  % low energy consumption users
-
+K = 10;                     % total users
+U = K/2;                    % URLLC users
+M = K - U;                  % mMTC users
 p_max = 0.5;                % max transmission power of users                  
 B = 10^6;                   % system total bandwidth
-F = 10^10;                  % total computation capacity of cloud
-
-C_k = 100;                  % CPU cycles    
-R_k = 5e+4;
+F = 10^10;                  % total computation capacity of edge cloud
+C = 100;                    % CPU cycles    
+L = 5e+4;                   % bits
 radius = 500;               % radius of a circular area       
 a = 2;                      % path-loss exponent                             
-N0 = -174;                  % dBm/Hz
-N_0 = 10^((N0 - 30) / 10);  % noise variance
+N0 = -174;                  % AWGN noise (dBm/Hz)
+No = 10^((N0 - 30) / 10);  
 
 
-E = 1e-4;         		
-E2 = 1e-7:1e-7:1e-6;            
-T2 = 0.1; 
+Eu = 1e-4;                  % energy threshold of URLLCs        		
+Em = 1e-6;                  % energy threshold of mMTCs            
+Tm = 0.3:0.1:1;             % latency threshold of mMTCs   
 
-B_k = B/K;                  % equally shared bandwidth case
-F_k = F/K;                  % equally shared CPU frequency case
+Bk = B/K;                   % equally shared bandwidth case
+Fk = F/K;                   % equally shared CPU frequency case
 
 % Scaling Factros
 scaleB = 1e+4;
 scaleF = 1e+8;
 
 % Options for fmincon
-options = optimoptions(@fmincon,...
-    'Display','off',...
-    'SpecifyObjectiveGradient',true,...
-    'OptimalityTolerance',1e-7,'ConstraintTolerance',1e-20,...
-    'StepTolerance',1e-30, 'MaxFunctionEvaluations',1e+5,...
-    'MaxIterations', 1e+5);
+options = optimoptions(@fmincon,'Display','off',...
+    'SpecifyObjectiveGradient',true,'OptimalityTolerance',1e-8,...
+    'ConstraintTolerance',1e-20,'StepTolerance',1e-30,...
+    'MaxFunctionEvaluations',1e+5,'MaxIterations', 1e+5);
 
-% Find optimal solution %
-L = 1000;
+% Find optimal solution - Monte Carlo Simulations %
+iterations = 1000;
 
-fval = zeros(1,length(E2));
-exitflag = zeros(1,length(E2));
-newFval = zeros(L,length(E2));
-fval2 = zeros(1,length(E2));
-exitflag2 = zeros(1,length(E2));
-newFval2 = zeros(L,length(E2));
-fval3 = zeros(1,length(E2));
-exitflag3 = zeros(1,length(E2));
-newFval3 = zeros(L,length(E2));
-for j = 1:L
-    
-    g_k = channelGain(radius,a,K);
-    
-    for i = 1:length(E2)
+Tu_tot = zeros(iterations,length(Tm));
+Tu_tot_2 = zeros(iterations,length(Tm));
+Tu_tot_3 = zeros(iterations,length(Tm));
+for j = 1:iterations
+    g = channelGain(radius,a,K);
+    for i = 1:length(Tm)
         
-        [x,fval(i),exitflag(i)] = optimization(K,M,N,B,F,scaleB,scaleF,p_max,R_k,g_k,N_0,C_k,E,E2(i),T2,options);
-        [x2,fval2(i),exitflag2(i)] = optimization_noB(K,M,N,F,scaleF,p_max,B_k,R_k,g_k,N_0,C_k,E,E2(i),T2,options);
-        [x3,fval3(i),exitflag3(i)] = optimization_noF(K,M,N,B,scaleB,p_max,F_k,R_k,g_k,N_0,C_k,E,E2(i),T2,options);
-
-       
-        if exitflag(i) ~= 1 
-            fval(i) = NaN;
-            
-        end
-        if exitflag2(i) ~= 1 
-            fval2(i) = NaN;
-            
-        end
-        if exitflag3(i) ~= 1 
-            fval3(i) = NaN;
-            
-        end
-
+        % proposed optimization - dynamic bandwidth and CPU allocation
+        [x,Tu,exitflag] = optimization(K,U,M,B,F,scaleB,scaleF,p_max,L,g,No,C,Eu,Em,Tm(i),options);
+        % fixed bandwidth allocation case
+        [x2,Tu_2,exitflag2] = optimization_noB(K,U,M,F,scaleF,p_max,Bk,L,g,No,C,Eu,Em,Tm(i),options);
+        % fixed CPU capacity allocation case
+        [x3,Tu_3,exitflag3] = optimization_noF(K,U,M,B,scaleB,p_max,Fk,L,g,No,C,Eu,Em,Tm(i),options);
         
+        % check for feasibility of optimization
+        if exitflag ~= 1
+            Tu = NaN;
+        end
+        if exitflag2 ~= 1
+            Tu_2 = NaN;
+        end
+        if exitflag3 ~= 1
+            Tu_3 = NaN;
+        end
+        
+        Tu_tot(j,i) = Tu;
+        Tu_tot_2(j,i) = Tu_2;
+        Tu_tot_3(j,i) = Tu_3;
     end
     disp(j);
-    newFval(j,:) = fval;
-    newFval2(j,:) = fval2;
-    newFval3(j,:) = fval3;
 end
-% plot(1e-3*R_k,fval); hold on; plot(1e-3*R_k,fval2); hold on; plot(1e-3*R_k,fval3)
 
-newFval(any(isnan(newFval),2),:) = [];
-newFval2(any(isnan(newFval2),2),:) = [];
-newFval3(any(isnan(newFval3),2),:) = [];
+% Remove iterations with non feasible solutions
+Tu_tot(any(isnan(Tu_tot),2),:) = [];
+Tu_tot_2(any(isnan(Tu_tot_2),2),:) = [];
+Tu_tot_3(any(isnan(Tu_tot_3),2),:) = [];
 
-T = mean(newFval,'omitnan');
-T_2 = mean(newFval2,'omitnan');
-T_3 = mean(newFval3,'omitnan');
-plot(1e-6*E2,1e+3*T,'-*');
+% Display results
+Tu_mean = mean(Tu_tot);
+Tu_2_mean = mean(Tu_tot_2);
+Tu_3_mean = mean(Tu_tot_3);
+plot(Tm,Tu_mean,'-*');
 hold on
-plot(1e-6*E2,1e+3*T_2,'-*');
+plot(Tm,Tu_2_mean,'-*');
 hold on
-plot(1e-6*E2,1e+3*T_3,'-*');
-xlabel('Energy threshold for mMTC users (μJ)');
-ylabel('Average Latency threshold for URLLC users (msec)')
+plot(Tm,Tu_3_mean,'-*');
+xlabel('Latency threshold for mMTC users (sec)');
+ylabel('Average Latency threshold for URLLC users (sec)')
 legend('Proposed Resource Allocation','Fixed Bandwidth','Fixed CPU Frequency','Location','best')
 hold off
 
-perc2 = ((T_2-T)/T)*100;
-perc3 = ((T_3-T)/T)*100;
-
-
-% sumBm = sum(x(2:6,:));
-% sumBn = sum(x(17:21,:));
-% disp(sumBm);
-% disp(sumBn);
-% sumFm = sum(x(7:11,:));
-% sumFn = sum(x(22:26,:));
-% disp(sumFm);
-% disp(sumFn);
-% sumFm2 = sum(x2(2:6,:));
-% sumFn2 = sum(x2(12:16,:));
-% disp(sumFm2);
-% disp(sumFn2);
-
-
+perc2 = ((Tu_2_mean-Tu_mean)/Tu_mean)*100;
+perc3 = ((Tu_3_mean-Tu_mean)/Tu_mean)*100;

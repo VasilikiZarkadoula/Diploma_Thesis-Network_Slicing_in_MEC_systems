@@ -1,5 +1,8 @@
-function g_k = channelGain(radius,a,K)
+function g = channelGain(radius,a,K)
 
-d_k = radius*rand(K,1);
-h_k = exprnd(2,K,1);
-g_k = (d_k.^(-a)).*(abs(h_k).^2);
+% distance between user - BS
+d = radius*rand(K,1);
+% exponential channel gain corresponding to Rayleigh fading
+h = exprnd(2,K,1);
+% channel gain
+g = (d.^(-a)).*(abs(h).^2);

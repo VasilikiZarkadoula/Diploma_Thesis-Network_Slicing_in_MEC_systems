@@ -29,9 +29,6 @@ which is decomposed into the following sub-problems:
 ![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/P3.PNG)
 ![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/P4.PNG)
 <br />
-The iterative algorithm is:
-<br />
-![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/iterative_algo.PNG)
-<br />
+
 <br />
 The simulation results are also provided in the 'Graphs' folders.

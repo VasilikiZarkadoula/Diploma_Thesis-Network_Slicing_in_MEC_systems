@@ -1,13 +1,16 @@
-function exhaustive_matching = exh_match(matrix)
+function exhaustive_matching = exh_match(cost_matrix)
+% Exhaustive Search Algorithm
 
-% Create a list of possibile indicies in the n x m matrix
-index_range = 1:length(matrix);
+rng shuffle;
+
+% Create a list of possibile indicies in the n x n matrix
+index_range = 1:length(cost_matrix);
 
 % Create a permutation of array indicies
 permutation = perms(index_range);
 
 lowest = -1;
-temp = zeros(1,length(matrix));          % Temporary tuple storage
+temp = zeros(1,length(cost_matrix));          % Temporary tuple storage
 
 % Loop through all permutations possible
 for i = 1:length(permutation)
@@ -19,7 +22,7 @@ for i = 1:length(permutation)
     first_perm = permutation(1,:);
     for j = 1:length(first_perm)
         user = first_perm(j);
-        cost = cost + matrix(user,index_assignment(user));
+        cost = cost + cost_matrix(user,index_assignment(user));
         
     end
     if cost < lowest || lowest == -1

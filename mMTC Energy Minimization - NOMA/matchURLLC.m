@@ -1,25 +1,31 @@
-function g_weak_matched = matchURLLC(users,channels,d_weak,a,Bs,No)
+function g_URLLC_matched = matchURLLC(users,d_URLLC,a,Bs,No)
+% This functions matches URLLC users to subchannels based on their channel gain
 
 rng shuffle;
-h_weak = zeros(users/2,channels); 
-g_weak = zeros(users/2,channels); 
+
+subchannels = users/2;
+h_URLLC = zeros(users/2,subchannels); 
+g_URLLC = zeros(users/2,subchannels); 
 for k=1:users/2
-    for s=1:channels
-        h_weak(k,s) = exprnd(2);
+    for s=1:subchannels
+        % exponential channel gain corresponding to Rayleigh fading
+        h_URLLC(k,s) = exprnd(2);
     end
-    g_weak = ((d_weak(k).^(-a)).*(abs(h_weak).^2))./(Bs*No);
+    % channel gain
+    g_URLLC = ((d_URLLC(k).^(-a)).*(abs(h_URLLC).^2))./(Bs*No);
 end
 
-%%% match weak users to sub-channels according to their channel gains %%%
-G = g_weak;
-SC_weak_unmatched = zeros(1,channels);
-while any(SC_weak_unmatched == 0)
+% matching
+G = g_URLLC;
+SC_URLLC_unmatched = zeros(1,subchannels);
+while any(SC_URLLC_unmatched == 0)
     maxG = max(G(:));
     [channel,user] = find(G == maxG);
-    SC_weak_unmatched(channel) = user;
+    SC_URLLC_unmatched(channel) = user;
     G(:, user) = 0;
     G(channel, :) = 0;
 end
-SC_weak_matched = SC_weak_unmatched;
+SC_URLLC_matched = SC_URLLC_unmatched;
 
-g_weak_matched = channelGain_afterMatching(SC_weak_matched,channels,g_weak);
+g_URLLC_matched = channelGain_afterMatching(SC_URLLC_matched,subchannels,g_URLLC);
+

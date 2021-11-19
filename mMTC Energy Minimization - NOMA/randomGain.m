@@ -1,5 +1,6 @@
-function h_mMTC = randomGain(channels)
-
+function h = randomGain(channels)
 rng shuffle;
-h_mMTC = exprnd(2,channels,channels);
+
+% exponential channel gain corresponding to Rayleigh fading
+h = exprnd(2,channels,channels);
   

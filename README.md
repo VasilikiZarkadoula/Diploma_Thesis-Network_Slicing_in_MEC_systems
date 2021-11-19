@@ -15,3 +15,23 @@ satisfying the heterogeneous requirements of both sets of devices. Then, the opt
 scheme. URLLC devices are orthogonally assigned to subchannels, but they share their resource blocks with mMTC devices and an optimization problem is formulated, that aims to minimize
 the energy consumption for the data offloading of mMTC users while satisfying the diverse requirements of both sets of devices. The original problem is decomposed into two sub-problems
 and these sub-problems are solved iteratively so as to obtain an optimal solution. Finally, the effectiveness of the proposed methods is verified through simulations.
+
+In particular, for the first part, the convex optimization problem to be solved is:
+<br />
+![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/P1.PNG)
+<br />
+For the second part, the optimization problem to be solved is:
+<br />
+![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/P2.PNG)
+<br />
+which is decomposed into the following sub-problems:
+<br />
+![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/P3.PNG)
+![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/P4.PNG)
+<br />
+The iterative algorithm is:
+<br />
+![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/iterative_algo.PNG)
+<br />
+<br />
+The simulation results are also provided in the 'Graphs' folders.

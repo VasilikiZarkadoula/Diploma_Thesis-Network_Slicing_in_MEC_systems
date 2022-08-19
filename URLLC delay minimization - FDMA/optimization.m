@@ -15,7 +15,7 @@ ub = [Inf; B*ones(U,1); F*ones(U,1); p_max*ones(U,1);...
 % Linear Inequality Constraints %
 [A,b] = LinearConstraints(U,M,B,F,scaleB,scaleF);
 
-% Inequality Constraints %
+% Equality Constraints %
 Aeq = [];
 beq = [];
 

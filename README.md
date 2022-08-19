@@ -20,6 +20,8 @@ In particular, for the first part, the convex optimization problem to be solved 
 <br />
 ![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/P1.PNG)
 <br />
+, where u denotes the URRLC device, m the MMTC device and k both types of devices.
+<br />
 For the second part, the optimization problem to be solved is:
 <br />
 ![ScreenShot](https://github.com/VasilikiZarkadoula/Diploma_Thesis-Network_Slicing_in_MEC_systems/blob/main/P2.PNG)
